@@ -1,0 +1,4 @@
+node_modules/
+client/dist/img/
+client/dist/*.js
+server/dist/

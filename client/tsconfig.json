@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "module": "es6",
+    "noImplicitAny": true,
+    "removeComments": true,
+    "preserveConstEnums": true,
+    "sourceMap": true,
+    "esModuleInterop": true,
+    "outDir": "../server/dist/web",
+    "baseUrl": "../node_modules",
+    "moduleResolution": "node"
+  },
+  "files": [
+    "Main.tsx",
+    "pages/Form.tsx",
+  ]
+}
