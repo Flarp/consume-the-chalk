@@ -1,4 +1,4 @@
-import {RowDataPacket} from "mysql2"
+import {createConnection, RowDataPacket} from "mysql2"
 
 export interface Chalkboard extends RowDataPacket {
   id: number,

@@ -1,6 +1,9 @@
+export type Color = "black" | "brown" | "green"
+export type Width = "normal" | "wide" | "extra wide"
+
 export interface ChalkForm {
-  width: ("normal" | "wide" | "extra wide")[]
-  color: ("black" | "brown" | "green")[]
+  width: Set<Width>
+  color: Set<Color>
   panelLow: number,
   panelHigh: number,
   range: boolean,
@@ -11,6 +14,10 @@ export interface ChalkForm {
 export interface ChalkboardRow {
   location: string,
   panels: number,
-  width: "normal" | "wide" | "extra wide",
-  color: "black" | "brown" | "green"
+  width: Width,
+  color: Color
 }
+
+//export interface AdminForm {
+//  location:
+//}

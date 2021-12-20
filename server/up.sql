@@ -1,0 +1,5 @@
+CREATE DATABASE IF NOT EXISTS `chalk`;
+
+CREATE TABLE IF NOT EXISTS `chalkboards` (
+  id int NOT NULL,
+)

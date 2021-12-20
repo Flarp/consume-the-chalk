@@ -20,10 +20,10 @@ class Main extends React.Component<{}, MainState> {
   state: MainState = {
     page: "form",
     form: {
-      width: [],
+      width: new Set(),
       panelLow: 0,
       panelHigh: 3,
-      color: [],
+      color: new Set(),
       startTime: "now",
       endTime: "now",
       range: false
@@ -36,7 +36,7 @@ class Main extends React.Component<{}, MainState> {
 
   async submit() {
     const queryString: string = new URLSearchParams(chalkFormToRecord(this.state.form)).toString()
-    console.log("did we even make it here")
+    //console.log("did we even make it here")
     const response: ChalkboardRow[] = await fetch("/chalkboards?" + queryString).then(res => res.json())
   }
 
