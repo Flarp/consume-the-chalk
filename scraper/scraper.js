@@ -1,3 +1,8 @@
+const JSDOM = require("jsdom").JSDOM
+const fs = require("fs")
+const path = require("path")
+
+/*** Constants for use in scraping ***/
 // 8=days, 9=times, 22=location
 const DAYS = 8
 const TIMES = 9
@@ -12,21 +17,29 @@ const BITMAP = {
   "S": 32
 }
 
+const BUILDING_NAMES = new Set()
+
+/*** Initial Scraping and Parsing ***/
+const document = new JSDOM(fs.readFileSync(path.join(__dirname, "classes.html"), {encoding:"utf8"})).window.document
 const table = document.getElementsByClassName("datadisplaytable")[0].children[1]
 
-Array.from(table.children).map(curr => {
+const rows = Array.from(table.children).map(curr => {
   // this is not a class node
   if (!curr.children[0].classList.contains("dddefault")) {
     return null
-  } else if (curr.children.length < 24 || curr.children[LOCATION].innerText === "ONLINE INTERNET" || curr.children[LOCATION].innerText === "TBA") {
+  } else if (curr.children.length < 24
+    || curr.children[LOCATION].textContent === "ONLINE INTERNET"
+    || curr.children[LOCATION].textContent.includes("TBA")
+    || curr.children[LOCATION].textContent.includes("NONE")) {
     return null
   }
 
-  const [building, room] = curr.children[LOCATION].innerText.split(" ")
+  const [building, room] = curr.children[LOCATION].textContent.split(" ")
+  BUILDING_NAMES.add(building)
 
   return [
-    curr.children[DAYS].innerText.split("").reduce((prev, curr) => prev + BITMAP[curr], 0),
-    ...(curr.children[TIMES].innerText.split("-").map(str => {
+    curr.children[DAYS].textContent.split("").reduce((prev, curr) => prev + BITMAP[curr], 0),
+    ...(curr.children[TIMES].textContent.split("-").map(str => {
       let [time, ampm] = str.split(" ")
       let [hours, minutes] = time.split(":")
       hours = Number(hours)
@@ -35,6 +48,19 @@ Array.from(table.children).map(curr => {
     building,
     room
   ]
-  //console.log("got a good one!", curr.children[DAYS-1].innerText, curr.children.length)
 
 }).filter(e => e !== null)
+
+const rows_csv = "days,start_time,end_time,building,room\n" + rows
+  .map(row => row.join(","))
+  .filter((val, i, self) => self.indexOf(val) === i)
+  .join("\n")
+
+/*** Storing of data into correct places for startup ***/
+fs.writeFileSync(path.join(__dirname, "classes.csv"), rows_csv)
+
+let sql = fs.readFileSync("./server/up_partial.sql", {encoding:"utf8"})
+fs.writeFileSync(
+  "./server/up.sql",
+  sql.replace(/@BUILDINGS@/g, [...BUILDING_NAMES].map(building => `"${building}"`).join(","))
+)
