@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server/dist/index.js",
-    "build": "cd server && tsc",
+    "build": "npm run build-server && npm run build-client",
+    "build-server": "cd server && tsc",
     "build-client": "cd client && tsc --jsx react && webpack --mode=development && cp -r dist/* ../server/dist/web",
     "scrape": "node scraper/scraper.js"
   },
@@ -22,6 +23,7 @@
   "devDependencies": {
     "@babel/preset-react": "^7.16.5",
     "@types/express": "^4.17.13",
+    "@types/jsrsasign": "^8.0.13",
     "@types/mysql2": "github:types/mysql2",
     "@types/node": "^17.0.0",
     "@types/react": "^17.0.37",
