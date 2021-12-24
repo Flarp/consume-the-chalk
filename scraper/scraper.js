@@ -59,8 +59,8 @@ const rows_csv = "days,start_time,end_time,building,room\n" + rows
 /*** Storing of data into correct places for startup ***/
 fs.writeFileSync(path.join(__dirname, "classes.csv"), rows_csv)
 
-let sql = fs.readFileSync("./server/up_partial.sql", {encoding:"utf8"})
+let sql = fs.readFileSync("./server/up.sql", {encoding:"utf8"})
 fs.writeFileSync(
-  "./server/up.sql",
-  sql.replace(/@BUILDINGS@/g, [...BUILDING_NAMES].map(building => `"${building}"`).join(","))
+  "./server/up_final.sql",
+  sql.replace(/@BUILDINGS@/g, [...BUILDING_NAMES].map(building => `'${building}'`).join(","))
 )

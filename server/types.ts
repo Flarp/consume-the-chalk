@@ -1,14 +1,29 @@
-import {createConnection, RowDataPacket} from "mysql2"
+import { Request } from "express"
 
-export interface Chalkboard extends RowDataPacket {
+export const COLORS = ["black", "brown", "green"]
+export type Color = typeof COLORS[number]
+
+export const WIDTHS = ["normal", "wide", "extra wide"]
+export type Width = typeof WIDTHS[number]
+
+export interface ChalkForm {
+  width: Width[]
+  color: Color[]
+  panels: [number, number]
+  startTime: string,
+  endTime: string
+}
+
+export interface Chalkboard {
   id: number,
   building: string,
   room: string,
   panels: number,
-  width: "normal" | "wide" | "extra wide",
-  color: "black" | "brown" | "green"
+  width: Width,
+  color: Color
 }
 
+/*
 export interface Occupancy extends RowDataPacket {
   id: number,
   building: string,
@@ -17,3 +32,4 @@ export interface Occupancy extends RowDataPacket {
   endTime: string,
   days: number
 }
+*/
