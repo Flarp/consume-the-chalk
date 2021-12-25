@@ -1,11 +1,11 @@
 import React from "react"
 import ReactDOM from "react-dom"
 
-import { ChalkForm, AdminProps, ChalkboardRow } from "./types"
+import { ChalkForm, AdminProps, ChalkboardRow } from "./utils"
 
 import { Form } from "./pages/Form"
 import { Table } from "./pages/Table"
-//import { Admin } from "./pages/Admin.tsx"
+import { Admin } from "./pages/Admin"
 
 //import "./styles/main.css"
 
@@ -22,14 +22,15 @@ function chalkFormToRecord(form: ChalkForm): string[][] {
     ...Object.entries(form)
       .filter(([_, val]) => typeof val === "string"),
 
+    // get days
+    ["days", form.days.toString()],
+
     // parse arrays and sets
     ...Object.entries(form)
       .filter(([_, val]) => typeof val !== "string")
       .map(([key, value]: [string, string[] | Set<string>]) => Array.from(value).map(vVal => [key, vVal]))
       .flat()
-      //[key, (console.log(value),"["+Array.from(value).join(",")+"]")])
   ]
-  //return Object.entries(form).map(([key, value]: [string, any]) => [key, Array.isArray(value) ? value.join(",") : (value === null ? "" : value.toString())])
 }
 
 class Main extends React.Component<{}, MainState> {
@@ -39,12 +40,11 @@ class Main extends React.Component<{}, MainState> {
       width: new Set(),
       panels: [1, 4],
       color: new Set(),
-      startTime: "now",
-      endTime: "now",
+      times: ["now", "now"],
+      days: (1 << (((new Date()).getDay() + 6) % 7)) & 63
     },
     table: [],
     admin: {
-      rows: [],
       key: "",
       currIndex: -1,
     }
@@ -54,27 +54,43 @@ class Main extends React.Component<{}, MainState> {
     this.setState({form})
   }
 
-  updateAdmin(admin: AdminProps): void {
-    this.setState({admin})
+  updateAdmin(table: ChalkboardRow[], admin: AdminProps): void {
+    this.setState({table, admin})
   }
 
   async submit() {
-    console.log(this.state.form)
     const chalk = chalkFormToRecord(this.state.form)
-    console.log(chalk)
     const queryString: string = new URLSearchParams(chalk).toString()
-    console.log(queryString)
     const response: ChalkboardRow[] = await fetch("/chalkboards?" + queryString).then(res => res.json())
+    this.setState({ page: "table", table: response })
+  }
+
+  async loadAdmin() {
+    const response: ChalkboardRow[] = await fetch("/admin").then(res => res.json())
+    this.setState({ page: "admin", table: response })
+  }
+
+  async adminSubmit() {
+
   }
 
   render() {
     switch (this.state.page) {
       case "form":
-        return <Form form={this.state.form} update={this.updateForm.bind(this)} submit={this.submit.bind(this)}/>
+        return <Form
+          form={this.state.form}
+          update={this.updateForm.bind(this)}
+          submit={this.submit.bind(this)}
+          admin={this.loadAdmin.bind(this)}/>
       case "table":
-        return <Table rows={this.state.table}/>
-      default:
-        return <div></div>
+        return <Table rows={this.state.table} ret={this.setState.bind(this, {page: "form"})}/>
+      case "admin":
+        return <Admin
+          rows={this.state.table}
+          admin={this.state.admin}
+          update={this.updateAdmin.bind(this)}
+          submit={this.adminSubmit.bind(this)}
+          ret={this.setState.bind(this, {page: "form"})}/>
     }
   }
 

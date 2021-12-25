@@ -6,12 +6,14 @@ export type Color = typeof COLORS[number]
 export const WIDTHS = ["normal", "wide", "extra wide"]
 export type Width = typeof WIDTHS[number]
 
+export const TIME = /^([0-1][0-9]|2[0-3]):[0-5][0-9]$/
+
 export interface ChalkForm {
   width: Width[]
   color: Color[]
   panels: [number, number]
-  startTime: string,
-  endTime: string
+  times: [string, string],
+  days: number
 }
 
 export interface Chalkboard {

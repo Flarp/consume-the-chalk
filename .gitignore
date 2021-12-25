@@ -4,3 +4,5 @@ client/dist/*.js
 server/dist/
 scraper/classes_files/
 scraper/*.html
+scraper/*.csv
+server/up_*.sql

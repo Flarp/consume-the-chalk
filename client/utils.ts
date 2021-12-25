@@ -14,12 +14,14 @@ export function titlecase(words: string): string {
   }).join(" ")
 }
 
+export const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+
 export interface ChalkForm {
   width: Set<Width>
   color: Set<Color>
   panels: [number, number]
-  startTime: string,
-  endTime: string
+  times: [string, string],
+  days: number
 }
 
 export interface ChalkboardRow {
@@ -32,13 +34,13 @@ export interface ChalkboardRow {
 }
 
 export interface AdminProps {
-  rows: ChalkboardRow[],
   key: string,
   currIndex: number
 }
 
 export interface TableProps {
-  rows: ChalkboardRow[]
+  rows: ChalkboardRow[],
+  ret: () => void
 }
 
 //export interface AdminForm {
