@@ -17,11 +17,11 @@ The API endpoint is `"/chalkboards"`, with these parameters -
 
 ### Query Parameters
 `color: ("black" | "brown" | "green")[]` An array of the desired chalkboard colors  
-`panels: integer` The minimum number of panels the chalkboard should have  
+`panels: [integer, integer]` The inclusive range of panels that results should fall in
 `number: integer` The minimum number of chalkboards that should be in the room  
 `width: ("normal" | "wide" | "extra wide")[]` The desired chalkboard widths  
 `days: bitmap<integer>` An 8-bit bitmap encoding the days of the week  
-`start_time: string` The desired start time of the range
+`start_time: string` The desired start time of the range  
 `end_time: string` The desired end time of the range
 
 For example, with an endpoint at `localhost:3000`, to get all rooms that have at least 3 black or green chalkboards and are available on Monday from 2:30PM to 3:30PM, the request would be
