@@ -13,7 +13,8 @@ export interface ChalkForm {
   color: Color[]
   panels: [number, number]
   times: [string, string],
-  days: number
+  days: number,
+  number: number
 }
 
 export interface Chalkboard {

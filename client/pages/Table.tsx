@@ -21,6 +21,7 @@ export class Table extends React.Component<TableProps> {
               <th>Color</th>
               <th>Panels</th>
               <th>Width</th>
+              <th>Count</th>
             </tr>
           </thead>
           <tbody>
@@ -29,6 +30,7 @@ export class Table extends React.Component<TableProps> {
             <td>{titlecase(row.color)}</td>
             <td>{row.panels}</td>
             <td>{titlecase(row.width)}</td>
+            <td>{row.number}</td>
           </tr>)}
           </tbody>
         </table>

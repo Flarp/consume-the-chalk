@@ -21,7 +21,8 @@ export interface ChalkForm {
   color: Set<Color>
   panels: [number, number]
   times: [string, string],
-  days: number
+  days: number,
+  number: number,
 }
 
 export interface ChalkboardRow {
@@ -30,18 +31,24 @@ export interface ChalkboardRow {
   room: string,
   panels: number,
   width: Width,
-  color: Color
+  color: Color,
+  number: number
 }
 
 export interface AdminProps {
   key: string,
-  currIndex: number
+  currIndex: number,
 }
 
 export interface TableProps {
   rows: ChalkboardRow[],
   ret: () => void
 }
+
+export type AdminOperation =
+  { operation: "add", rows: ChalkboardRow[] }
+  | { operation: "delete", row: ChalkboardRow }
+  | { operation: "update", row: ChalkboardRow }
 
 //export interface AdminForm {
 //  location:

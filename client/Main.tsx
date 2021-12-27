@@ -1,13 +1,12 @@
 import React from "react"
 import ReactDOM from "react-dom"
+import { RSAKey, KEYUTIL, KJUR } from "jsrsasign"
 
 import { ChalkForm, AdminProps, ChalkboardRow } from "./utils"
 
 import { Form } from "./pages/Form"
 import { Table } from "./pages/Table"
 import { Admin } from "./pages/Admin"
-
-//import "./styles/main.css"
 
 interface MainState {
   page: "form" | "table" | "admin",
@@ -17,17 +16,20 @@ interface MainState {
 }
 
 function chalkFormToRecord(form: ChalkForm): string[][] {
+  const entries = Object.entries(form)
   return [
     // get normal string pairs
-    ...Object.entries(form)
+    ...entries
       .filter(([_, val]) => typeof val === "string"),
 
-    // get days
-    ["days", form.days.toString()],
+    // get number pairs
+    ...entries
+      .filter(([_, val]) => typeof val === "number")
+      .map(([key, value]: [string, number]) => [key, value.toString()]),
 
     // parse arrays and sets
-    ...Object.entries(form)
-      .filter(([_, val]) => typeof val !== "string")
+    ...entries
+      .filter(([_, val]) => typeof val !== "string" && typeof val !== "number")
       .map(([key, value]: [string, string[] | Set<string>]) => Array.from(value).map(vVal => [key, vVal]))
       .flat()
   ]
@@ -41,7 +43,8 @@ class Main extends React.Component<{}, MainState> {
       panels: [1, 4],
       color: new Set(),
       times: ["now", "now"],
-      days: (1 << (((new Date()).getDay() + 6) % 7)) & 63
+      days: (1 << (((new Date()).getDay() + 6) % 7)) & 63,
+      number: 1
     },
     table: [],
     admin: {
@@ -54,8 +57,9 @@ class Main extends React.Component<{}, MainState> {
     this.setState({form})
   }
 
-  updateAdmin(table: ChalkboardRow[], admin: AdminProps): void {
-    this.setState({table, admin})
+  updateAdmin(table: ChalkboardRow[], admin: AdminProps): Promise<void> {
+    console.log(table, admin, "there's no way this is working")
+    return new Promise((res, rej) => this.setState({table, admin}, res))
   }
 
   async submit() {
@@ -70,8 +74,34 @@ class Main extends React.Component<{}, MainState> {
     this.setState({ page: "admin", table: response })
   }
 
-  async adminSubmit() {
-
+  async adminSubmit(operation: "update" | "delete" | "add", row: ChalkboardRow) {
+    let signature = ""
+    console.log("are we making it here anymore?")
+    if (this.state.admin.key !== "") {
+      const rsa = new KJUR.crypto.Signature({"alg": "SHA1withRSA"});
+      rsa.init(this.state.admin.key)
+      rsa.updateString(JSON.stringify(row))
+      signature = rsa.sign()
+    }
+    fetch("/admin", {
+      method: "POST",
+      body: JSON.stringify({row, signature, operation}),
+      headers: {
+        "Content-Type": "application/json"
+      }
+    })
+    console.log(JSON.stringify({row, signature, operation}))
+    switch (operation) {
+      case "update":
+        console.log("update")
+        break
+      case "delete":
+        console.log("delete")
+        break
+      case "add":
+        console.log("add")
+        break
+    }
   }
 
   render() {
@@ -90,7 +120,7 @@ class Main extends React.Component<{}, MainState> {
           admin={this.state.admin}
           update={this.updateAdmin.bind(this)}
           submit={this.adminSubmit.bind(this)}
-          ret={this.setState.bind(this, {page: "form"})}/>
+          ret={this.setState.bind(this, {page: "form", admin: {currIndex: -1}})}/>
     }
   }
 

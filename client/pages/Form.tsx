@@ -55,7 +55,7 @@ export class Form extends React.Component<Props> {
 
       <br/>
 
-      <p style={{marginBottom: "1em"}}>Days Available</p>
+      <p style={{marginBottom: "0.5em"}}>Days Available</p>
       <div style={{display: "flex", justifyContent: "space-around"}}>
         {DAYS.map((day, i) => <div>
           <label htmlFor={day}>{day}</label>
@@ -66,14 +66,27 @@ export class Form extends React.Component<Props> {
           }}/>
         </div>)}
       </div>
+      <br/>
 
+      <br/>
+      <div style={{display: "grid", gridTemplateColumns: "1fr 1fr", justifyItems: "center"}}>
       {this.props.form.times.map((time, i) => <div>
-        <label htmlFor={`time${i}`}>{i === 0 ? "Start" : "End"} Time</label>
+        <label htmlFor={`time${i}`}>{i === 0 ? "Start" : "End"} Time </label>
         <input type="time" id={`time${i}`} onChange={e => {
           this.props.form.times[i] = e.target.value
           this.props.update(this.props.form)
         }}/>
       </div>)}
+      </div>
+
+      <br/>
+
+      <label htmlFor="number">Number of boards</label>
+      <input type="number" min="1" max="4" value={this.props.form.number} onChange={e => {
+        this.props.form.number = Number(e.target.value)
+        this.props.update(this.props.form)
+      }}/>
+
 
       <input type="submit" id="submit" onClick={e => {
         e.preventDefault()
