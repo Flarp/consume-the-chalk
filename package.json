@@ -7,10 +7,11 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server/dist/index.js",
     "tsc": "tsc",
+    "webpack": "webpack",
     "postInstall": "npm run build",
     "build": "npm run build-server && npm run build-client",
-    "build-server": "cd server && tsc",
-    "build-client": "cd client && tsc --jsx react && webpack --mode=development && cp -r dist/* ../server/dist/web",
+    "build-server": "cd server && npm run tsc",
+    "build-client": "cd client && npm run tsc --jsx react && npm run webpack --mode=development && cp -r dist/* ../server/dist/web",
     "scrape": "node scraper/scraper.js"
   },
   "author": "",
