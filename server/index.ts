@@ -3,18 +3,13 @@ import bodyParser from "body-parser"
 import { Pool } from "pg"
 import { KJUR } from "jsrsasign"
 import path from "path"
-import { readFileSync } from "fs"
 import { Mutex } from "async-mutex"
 import sleep from "sleep-promise"
 
 import { COLORS, WIDTHS, ChalkForm, TIME } from "./utils"
 
-let PUBLIC_KEY: string;
-try {
-  PUBLIC_KEY = readFileSync(path.join(__dirname, "id_rsa.pub"), "utf8")
-  console.log("jimmy jazz?")
-} catch (err) {
-  PUBLIC_KEY = ""
+let PUBLIC_KEY = process.env.PUBLIC_KEY || "";
+if (PUBLIC_KEY === "") {
   console.warn("No public key found: app will run in insecure mode")
 }
 
