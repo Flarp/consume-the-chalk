@@ -20,7 +20,12 @@ try {
 
 const app = express()
 
-const pool = new Pool({
+const pool = new Pool(process.env.DATABASE_URL ? {
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false
+  }
+} : {
   user: "postgres",
   password: "",
   database: "postgres",
