@@ -70,7 +70,17 @@ export class Admin extends React.Component<Props> {
       <h4 style={{color: "blue"}} onClick={_ => this.props.ret()}>Return <i className="bi bi-arrow-counterclockwise"></i></h4>
 
       <h4 style={{color: "blue"}} onClick={_ => {
-        const ind = this.props.rows.push({...this.props.rows[this.props.rows.length - 1], id: -1})
+        const ind = this.props.rows.push(this.props.rows.length !== 0
+          ? {...this.props.rows[this.props.rows.length - 1], id: -1}
+          : {
+            id: -1,
+            building: BUILDINGS[0],
+            room: "",
+            color: COLORS[0],
+            width: WIDTHS[0],
+            panels: 1,
+            number: 1
+          })
         this.props.admin.currIndex = ind - 1
         this.props.update(this.props.rows, this.props.admin)
       }}>Add <i className="bi bi-plus-square"></i></h4>

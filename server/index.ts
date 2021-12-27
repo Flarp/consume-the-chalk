@@ -107,7 +107,6 @@ app.post("/admin", async (req: Request, res: Response) => {
     key.init(PUBLIC_KEY)
     key.updateString(JSON.stringify(req.body.row))
     if (!key.verify(req.body.signature)) {
-      console.log("JIMMY JAZZ")
       res.send("no")
       return
     }
@@ -124,19 +123,21 @@ app.post("/admin", async (req: Request, res: Response) => {
   ]
   switch (req.body.operation) {
     case "delete":
-      pool.query("DELETE FROM chalkboards WHERE id = $1::int;", [row.id])
+      await pool.query("DELETE FROM chalkboards WHERE id = $1::int;", [row.id])
       break;
     case "update":
-      pool.query(`UPDATE chalkboards SET
+      await pool.query(`UPDATE chalkboards SET
         building = $1, room = $2, panels = $3::int,
         width = $4, color = $5, number = $6::int
         WHERE id = $7::int;`, argArray)
       break
     case "add":
-      pool.query(`INSERT INTO chalkboards
+      await pool.query(`INSERT INTO chalkboards
         (building, room, panels, width, color, number)
         VALUES ($1, $2, $3::int, $4, $5, $6::int);`, argArray.slice(0, 6))
   }
+  const {rows} = await pool.query("SELECT * FROM chalkboards;")
+  res.send(rows)
 })
 
 app.listen(process.env.PORT || 3000)

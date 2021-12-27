@@ -58,7 +58,7 @@ class Main extends React.Component<{}, MainState> {
   }
 
   updateAdmin(table: ChalkboardRow[], admin: AdminProps): Promise<void> {
-    console.log(table, admin, "there's no way this is working")
+    //console.log(table, admin, "there's no way this is working")
     return new Promise((res, rej) => this.setState({table, admin}, res))
   }
 
@@ -69,39 +69,30 @@ class Main extends React.Component<{}, MainState> {
     this.setState({ page: "table", table: response })
   }
 
-  async loadAdmin() {
-    const response: ChalkboardRow[] = await fetch("/admin").then(res => res.json())
-    this.setState({ page: "admin", table: response })
+  async loadAdmin(rows?: ChalkboardRow[]) {
+    const response: ChalkboardRow[] = Array.isArray(rows)
+      ? rows
+      : await fetch("/admin").then(res => res.json())
+    console.log(response)
+    return this.setState({ page: "admin", table: response })
   }
 
   async adminSubmit(operation: "update" | "delete" | "add", row: ChalkboardRow) {
     let signature = ""
-    console.log("are we making it here anymore?")
     if (this.state.admin.key !== "") {
       const rsa = new KJUR.crypto.Signature({"alg": "SHA1withRSA"});
       rsa.init(this.state.admin.key)
       rsa.updateString(JSON.stringify(row))
       signature = rsa.sign()
     }
-    fetch("/admin", {
+    const updated = await fetch("/admin", {
       method: "POST",
       body: JSON.stringify({row, signature, operation}),
       headers: {
         "Content-Type": "application/json"
       }
-    })
-    console.log(JSON.stringify({row, signature, operation}))
-    switch (operation) {
-      case "update":
-        console.log("update")
-        break
-      case "delete":
-        console.log("delete")
-        break
-      case "add":
-        console.log("add")
-        break
-    }
+    }).then(res => res.json())
+    this.loadAdmin(updated)
   }
 
   render() {

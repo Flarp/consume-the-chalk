@@ -9,7 +9,7 @@ CREATE TABLE chalkboards (
   panels SMALLINT NOT NULL,
   width WIDTHS NOT NULL,
   color COLORS NOT NULL,
-  board_count SMALLINT NOT NULL
+  number SMALLINT NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS occupancies (
