@@ -17,7 +17,7 @@ The API endpoint is `"/chalkboards"`, with these parameters -
 
 ### Query Parameters
 `color: ("black" | "brown" | "green")[]` An array of the desired chalkboard colors  
-`panels: [integer, integer]` The inclusive range of panels that results should fall in
+`panels: [integer, integer]` The inclusive range of panels that results should fall in  
 `number: integer` The minimum number of chalkboards that should be in the room  
 `width: ("normal" | "wide" | "extra wide")[]` The desired chalkboard widths  
 `days: bitmap<integer>` An 8-bit bitmap encoding the days of the week  
